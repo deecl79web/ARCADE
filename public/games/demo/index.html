@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo Clicker</title>
+<style>
+  body { margin: 0; height: 100vh; display: flex; flex-direction: column; align-items: center;
+         justify-content: center; background: #1b1d3a; color: #fff; font-family: sans-serif; user-select: none; }
+  button { font-size: 28px; padding: 24px 48px; border: 0; border-radius: 16px; background: #ff6b6b; color: #fff; cursor: pointer; }
+  button:active { transform: scale(.96); }
+</style>
+</head>
+<body>
+<h2>Temps restant : <span id="time">15</span> s</h2>
+<h1>Score : <span id="score">0</span></h1>
+<button id="btn">CLIQUE !</button>
+<script>
+  // Jeu de démo : 15 secondes, 10 points de score par clic.
+  // À la fin, on envoie le score au parent. Le serveur reste l'arbitre final.
+  let score = 0, time = 15, over = false;
+  const scoreEl = document.getElementById('score');
+  const timeEl = document.getElementById('time');
+  const btn = document.getElementById('btn');
+
+  btn.addEventListener('click', () => { if (!over) { score += 10; scoreEl.textContent = score; } });
+
+  const timer = setInterval(() => {
+    time -= 1;
+    timeEl.textContent = time;
+    if (time <= 0) {
+      over = true;
+      clearInterval(timer);
+      btn.disabled = true;
+      window.parent.postMessage({ type: 'arcade:gameover', score }, '*');
+    }
+  }, 1000);
+</script>
+</body>
+</html>
